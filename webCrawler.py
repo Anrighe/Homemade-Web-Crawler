@@ -20,11 +20,11 @@ def acquireAddress():
 
 
 def webCrawler(startingAddress, visited):
-    print("Current startingAddress: " + startingAddress) #debug
+    #print("Current startingAddress: " + startingAddress) #debug
     #print("Current visited: " + str(visited)) #debug
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    r = requests.get(startingAddress, headers=headers)
-    #print("REQUEST: " + str(r.url)) #debug: check if the request is being re-addressed somewhere else
+    r = requests.get(startingAddress, headers=headers, timeout=3)
+    print("REQUEST: " + str(r.url)) #debug: check if the request is being re-addressed somewhere else
 
     extractor = URLExtract()
     urls = extractor.find_urls(r.text)
@@ -36,18 +36,20 @@ def webCrawler(startingAddress, visited):
 
     for i in urls:
         #print("Checking if " + startingAddress + " is in " + i)
-        if re.search(("^(.*\.)?" + startingAddress + "/.+$"), i) != None:
+        #print("REGEX: " + regexp)
+        if re.search("^https://.+$", i) != None and "mp4" not in i and "mp3" not in i:
             #print("MATCH")
             matches.append(i)
 
-    print(matches) #debug
+    print("MATCHES: " + str(matches)) #debug
 
     for i in matches:
         if (i not in visited):
+            print("Visiting " + i)
             nextVisit = max(visited.values())+1
             visited.update({i:nextVisit})
-            visited = webCrawler(startingAddress, visited) #safe??
-            #visited = webCrawler(i, visited) #experimental
+            #visited = webCrawler(startingAddress, visited) #IT DOES NOT MAKE ANY SENSE TO START OVER EVERY SINGLE TIME
+            visited = webCrawler(i, visited) #experimental
             print("visited: " + str(visited))
 
 
