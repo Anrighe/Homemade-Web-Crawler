@@ -3,6 +3,7 @@ import re
 from urlextract import URLExtract
 
 
+
 def acquireAddress():
     print("Please insert a starting address: ")
     # startingAddress = input()
@@ -87,10 +88,15 @@ def main():
     for key, value in visited.items():
         print(key + " ")
     f = open("crawlerPath.txt", "w")
+    f.write("{")
     for key, value in visited.items():
-        f.write(key + ":" + value + "\n")
+        f.write("\'" + key + "\':\'" + value + "\',")
+    f.write("}")
 
     f.close()
+
+
+
 
 main()
 
