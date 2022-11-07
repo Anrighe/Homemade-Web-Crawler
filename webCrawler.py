@@ -20,7 +20,7 @@ def acquireAddress():
 
 
 def webCrawler(startingAddress, visited, currentDepth, maxDepth):
-    print("Current depth: " + currentDepth)
+    print("Current depth: " + str(currentDepth))
     if (currentDepth > maxDepth):
         return visited
 
@@ -55,23 +55,21 @@ def webCrawler(startingAddress, visited, currentDepth, maxDepth):
     for i in matches:
         if (i not in visited):
             print("Visiting " + i)
-            nextVisit = max(visited.values())+1
-            visited.update({i:nextVisit})
+
+            #print("VALUESSSSS: " + str(visited.values()))
+            #nextVisit = max(visited.values())+1
+
+            visited.update({i:startingAddress})
             visited = webCrawler(i, visited, currentDepth+1, maxDepth)
             print("visited: " + str(visited))
-
-
-
-
-
 
     return visited
 
 
 
 startingAddress = acquireAddress()
-maxDepth = 5
-visited = webCrawler(startingAddress, {startingAddress:1}, 1, maxDepth) #key = visited address : value = order of visit
+maxDepth = 3
+visited = webCrawler(startingAddress, {startingAddress:startingAddress}, 1, maxDepth) #key = visited address : value = previous address that allowed to visited the current
 
 print("Visited: ")
 for key, value in visited.items():
