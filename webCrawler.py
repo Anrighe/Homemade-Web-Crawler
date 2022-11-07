@@ -19,11 +19,20 @@ def acquireAddress():
     return startingAddress
 
 
-def webCrawler(startingAddress, visited):
+def webCrawler(startingAddress, visited, currentDepth, maxDepth):
+    print("Current depth: " + currentDepth)
+    if (currentDepth > maxDepth):
+        return visited
+
     #print("Current startingAddress: " + startingAddress) #debug
     #print("Current visited: " + str(visited)) #debug
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
-    r = requests.get(startingAddress, headers=headers, timeout=3)
+
+    try:
+        r = requests.get(startingAddress, headers=headers, timeout=3)
+    except requests.exceptions.RequestException as e:
+        return visited
+
     print("REQUEST: " + str(r.url)) #debug: check if the request is being re-addressed somewhere else
 
     extractor = URLExtract()
@@ -48,8 +57,7 @@ def webCrawler(startingAddress, visited):
             print("Visiting " + i)
             nextVisit = max(visited.values())+1
             visited.update({i:nextVisit})
-            #visited = webCrawler(startingAddress, visited) #IT DOES NOT MAKE ANY SENSE TO START OVER EVERY SINGLE TIME
-            visited = webCrawler(i, visited) #experimental
+            visited = webCrawler(i, visited, currentDepth+1, maxDepth)
             print("visited: " + str(visited))
 
 
@@ -62,7 +70,8 @@ def webCrawler(startingAddress, visited):
 
 
 startingAddress = acquireAddress()
-visited = webCrawler(startingAddress, visited={startingAddress:1}) #key shows the visited address meanwhile the value shows the order of visit
+maxDepth = 5
+visited = webCrawler(startingAddress, {startingAddress:1}, 1, maxDepth) #key = visited address : value = order of visit
 
 print("Visited: ")
 for key, value in visited.items():
