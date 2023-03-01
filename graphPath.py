@@ -16,7 +16,6 @@ nodes = keyNodes + valueNodes
 nodes = list(dict.fromkeys(nodes))
 
 edges = visited.items()
-
 G.add_nodes_from(nodes)
 
 for value, key in visited.items():
